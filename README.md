@@ -17,7 +17,7 @@ Learning Roadmap
 - [x] HTML, CSS, and JavaScript fundamentals
 - [x] Understanding React components and JSX
 - [x] Working with props and state
-- [ ] Fetching data from APIs 
+- [x] Fetching data from APIs 
 - [ ] Building the movie search interface
 - [ ] Styling with CSS or Tailwind
 - [ ] Hosting the app (maybe on GitHub Pages or Netlify!)
