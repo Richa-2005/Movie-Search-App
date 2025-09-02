@@ -5,10 +5,7 @@ It will allow users to search for movies and view their details using a public m
 
 ---
 
-Status: *Learning Phase*
-
-I’ve just started learning **React**, and this project will help me apply what I learn step-by-step.  
-I'll begin development once I'm confident with the basics!
+Status: *Development Phase*
 
 ---
 
@@ -34,5 +31,3 @@ Goals for the App
 
  Stay Tuned!
 
-I'll update this repository as I learn and grow in my React journey.  
-Thanks for visiting! 
