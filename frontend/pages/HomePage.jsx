@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../design/HomePage.css'
-
+import axios from 'axios'
 export default function App (){
 
  //States : User input -> searchQuery, Response from API -> searchResults, 
@@ -19,7 +19,6 @@ export default function App (){
       setSearchResults([]);
       return;
     }
-
     //Handling of response 
 
     setIsLoading(true);
@@ -27,20 +26,24 @@ export default function App (){
     setSearchResults([]);
 
     try {
-      const response = await axios.get('',{name:query});
-      const data = await response.json();
-
-      if (data.Response === 'True' && data.Search) {
-        setSearchResults(data.Search);
-        if (data.Search.length === 0) {
-            setMessage('No movies found. Please try a different title.');
-        }
+     
+      const response = await axios.get(`http://localhost:3500/movies/${encodeURIComponent(query)}`);
+     
+      const movies = response.data;
+      
+      if (Array.isArray(movies) && movies.length > 0) {
+        setSearchResults(movies);
+        setMessage('');
       } else {
-        setMessage(data.Error || 'An error occurred. Please try again.');
+        setMessage('No movies found. Please try a different title.');
       }
     } catch (error) {
-      console.error('Error fetching movies:', error);
-      setMessage('An error occurred. Please try again.');
+      if (error.response && error.response.data && error.response.data.error) {
+        setMessage(error.response.data.error);
+      } else {
+        console.error('Error fetching movies:', error);
+        setMessage('An error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
