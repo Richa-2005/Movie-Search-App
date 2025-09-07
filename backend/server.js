@@ -1,11 +1,9 @@
 import express from 'express'
-import axios from 'axios'
-import dotenv from 'dotenv'
 import cors from 'cors'
 import getRoutes from './route.js/movie.route.js'
 
 const app = express()
-dotenv.config()
+
 
 app.use(express.json())
 app.use(cors());

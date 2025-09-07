@@ -5,14 +5,14 @@ export default function App (){
 
  //States : User input -> searchQuery, Response from API -> searchResults, 
  // Loading -> isLoading , Message if no result -> message
-
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('Type a movie title and hit search!');
-
+  const [totalResults, setTotalResults] = useState(0);
   // Function to handle the search.
-  const handleSearch = async () => {
+  const handleSearch = async (pageToFetch=1) => {
     const query = searchQuery.trim();
     if (!query) {
       setMessage('Please enter a movie title to search.');
@@ -23,17 +23,24 @@ export default function App (){
 
     setIsLoading(true);
     setMessage('');
-    setSearchResults([]);
+    if (pageToFetch === 1) {
+      setSearchResults([]);
+      setTotalResults(0);
+    }
+
 
     try {
      
-      const response = await axios.get(`http://localhost:3500/movies/${encodeURIComponent(query)}`);
+      const response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}`);
      
-      const movies = response.data;
+      const { Search, totalResults } = response.data;
       
-      if (Array.isArray(movies) && movies.length > 0) {
-        setSearchResults(movies);
+      if (Search) {
+        // Append new movies to the existing list
+        setSearchResults((prevResults) => [...prevResults, ...Search]);
+        setTotalResults(Number(totalResults));
         setMessage('');
+        setPage((prevPage)=>prevPage+1);
       } else {
         setMessage('No movies found. Please try a different title.');
       }
@@ -49,14 +56,17 @@ export default function App (){
     }
   };
 
-  // Component to render a single movie card.
+  const handlePage = ()=> {
+    handleSearch(page+1)
+  }
+
   const MovieCard = ({ movie }) => {
     const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/F7A5A5/5D688A?text=No+Image';
     return (
-      <div className="bg-[#F7A5A5] p-4 rounded-lg shadow-xl text-center cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl">
-        <img src={posterUrl} alt={`${movie.Title} Poster`} className="rounded-lg w-full h-auto mb-4 object-cover shadow-md" />
-        <h3 className="text-xl font-semibold mb-1 truncate text-[#5D688A]">{movie.Title}</h3>
-        <p className="text-[#FFF2EF] text-sm">{movie.Year}</p>
+      <div className="movie-div">
+        <img src={posterUrl} alt={`${movie.Title} Poster`}  />
+        <h3 >{movie.Title}</h3>
+        <p >{movie.Year}</p>
       </div>
     );
   };
@@ -106,11 +116,19 @@ export default function App (){
             <div className="message">Loading...</div>
           </div>
         ) : (
+         
           searchResults.map((movie) => <MovieCard key={movie.imdbID} movie={movie} />)
+          
         )}
+         
       </div>
-  
-      
+      {searchResults.length>0 &&<button
+            id="pages-button"
+            onClick={handlePage}
+            className="movie-button"
+          >
+            Show More 
+          </button>}
     </div>
   );
 };
