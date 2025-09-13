@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../design/HomePage.css'
 import axios from 'axios'
 export default function App (){
@@ -9,8 +9,20 @@ export default function App (){
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMoreLoading, setIsMoreLoading] = useState(false);
   const [message, setMessage] = useState('Type a movie title and hit search!');
   const [totalResults, setTotalResults] = useState(0);
+  
+  // This effect will automatically scroll the user to the bottom when new movies are added.
+  useEffect(() => {
+    if (searchResults.length > 0 && !isLoading && !isMoreLoading) {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [searchResults, isLoading, isMoreLoading]);
+
   // Function to handle the search.
   const handleSearch = async (pageToFetch=1) => {
     const query = searchQuery.trim();
@@ -19,18 +31,17 @@ export default function App (){
       setSearchResults([]);
       return;
     }
-    //Handling of response 
-
-    setIsLoading(true);
-    setMessage('');
+    
     if (pageToFetch === 1) {
-      setSearchResults([]);
+      setIsLoading(true);
+      setSearchResults([]); // Clear previous results for a new search
       setTotalResults(0);
+    } else {
+      setIsMoreLoading(true);
     }
-
-
+    setMessage('');
+    
     try {
-     
       const response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}`);
      
       const { Search, totalResults } = response.data;
@@ -40,7 +51,7 @@ export default function App (){
         setSearchResults((prevResults) => [...prevResults, ...Search]);
         setTotalResults(Number(totalResults));
         setMessage('');
-        setPage((prevPage)=>prevPage+1);
+        setPage(pageToFetch);
       } else {
         setMessage('No movies found. Please try a different title.');
       }
@@ -53,11 +64,12 @@ export default function App (){
       }
     } finally {
       setIsLoading(false);
+      setIsMoreLoading(false);
     }
   };
 
   const handlePage = ()=> {
-    handleSearch(page+1)
+    handleSearch(page + 1);
   }
 
   const MovieCard = ({ movie }) => {
@@ -70,6 +82,10 @@ export default function App (){
       </div>
     );
   };
+
+  // Only show the "Show More" button if there are more results to load
+  const showLoadMore = searchResults.length > 0 && searchResults.length < totalResults;
+
 
   return (
     <div className="body-container">
@@ -89,14 +105,14 @@ export default function App (){
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleSearch();
+                handleSearch(1);
               }
             }}
             className="movie-entry"
           />
           <button
             id="search-button"
-            onClick={handleSearch}
+            onClick={() => handleSearch(1)}
             className="movie-button"
           >
             Search
@@ -116,21 +132,19 @@ export default function App (){
             <div className="message">Loading...</div>
           </div>
         ) : (
-         
           searchResults.map((movie) => <MovieCard key={movie.imdbID} movie={movie} />)
-          
         )}
-         
       </div>
-      {searchResults.length>0 &&<button
+
+      {showLoadMore && (
+        <button
             id="pages-button"
             onClick={handlePage}
             className="movie-button"
           >
-            Show More 
-          </button>}
+            {isMoreLoading ? "Loading..." : "Show More"}
+          </button>
+      )}
     </div>
   );
 };
-
-
