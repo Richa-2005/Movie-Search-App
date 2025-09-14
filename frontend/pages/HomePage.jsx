@@ -7,26 +7,18 @@ export default function App (){
  // Loading -> isLoading , Message if no result -> message
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [year,setYear] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
   const [message, setMessage] = useState('Type a movie title and hit search!');
   const [totalResults, setTotalResults] = useState(0);
-  
-  // This effect will automatically scroll the user to the bottom when new movies are added.
-  useEffect(() => {
-    if (searchResults.length > 0 && !isLoading && !isMoreLoading) {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [searchResults, isLoading, isMoreLoading]);
 
   // Function to handle the search.
-  const handleSearch = async (pageToFetch=1) => {
+   // Function to handle the search.
+   const handleSearch = async (pageToFetch=1) => {
     const query = searchQuery.trim();
-    if (!query) {
+    if (!query) { 
       setMessage('Please enter a movie title to search.');
       setSearchResults([]);
       return;
@@ -42,12 +34,19 @@ export default function App (){
     setMessage('');
     
     try {
-      const response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}`);
+      const yearParam = year.trim();
+      let response;
+      if (yearParam) {
+        // If a year is provided, build the URL with the year parameter
+        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}/${yearParam}`);
+      } else {
+        // Otherwise, build the URL without the year
+        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}`);
+      }
      
       const { Search, totalResults } = response.data;
       
       if (Search) {
-        // Append new movies to the existing list
         setSearchResults((prevResults) => [...prevResults, ...Search]);
         setTotalResults(Number(totalResults));
         setMessage('');
@@ -73,10 +72,17 @@ export default function App (){
   }
 
   const MovieCard = ({ movie }) => {
-    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/F7A5A5/5D688A?text=No+Image';
+    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/FFF2EF/5D688A?text=No+Poster+Available';
     return (
       <div className="movie-div">
-        <img src={posterUrl} alt={`${movie.Title} Poster`}  />
+        <img 
+          src={posterUrl} 
+          alt={`${movie.Title} Poster`}  
+          onError={(e) => {
+            e.target.onerror = null; // Prevents infinite loop
+            e.target.src = 'https://placehold.co/400x600/FFF2EF/5D688A?text=No+Poster+Available';
+          }}
+        />
         <h3 >{movie.Title}</h3>
         <p >{movie.Year}</p>
       </div>
@@ -99,7 +105,6 @@ export default function App (){
         <div className="user-div">
           <input
             type="text"
-            id="movie-search"
             placeholder="Search for a movie by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -108,10 +113,30 @@ export default function App (){
                 handleSearch(1);
               }
             }}
-            className="movie-entry"
+            className="movie-entry-title"
           />
+          <input
+            type="text"
+            placeholder="Enter year"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch(1);
+              }
+            }}
+            className="movie-entry-year"
+          />
+          {/* <select className="movie-entry-year" onChange={handleYearChange}>
+            <option>Select Decade</option>
+            <option>2020-2025</option>
+            <option>2010-2020</option>
+            <option>2000-2010</option>
+            <option>1990-2000</option>
+            <option>1980-1990</option>
+            <option>{"Before 1980s"}</option>
+          </select> */}
           <button
-            id="search-button"
             onClick={() => handleSearch(1)}
             className="movie-button"
           >

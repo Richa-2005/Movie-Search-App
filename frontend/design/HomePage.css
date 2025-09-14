@@ -42,7 +42,7 @@
     width: 100%;
 }
 
-.movie-entry{
+.movie-entry-title{
     display: flex;
     padding:0.75rem 1rem 0.75rem 1rem;
     color: #5D688A;
@@ -65,12 +65,42 @@
     font-size: 20px;
 }
 
-.movie-entry:focus {
+.movie-entry-title:focus {
     outline: none; 
     box-shadow: 0 0 0 3px #f4aaaa;
 }
 
-.movie-entry::placeholder {
+.movie-entry-title::placeholder {
+    color: #6B7280;
+    font-size: 15px;
+}
+
+.movie-entry-year{
+    display: flex;
+    padding:0.75rem 1rem 0.75rem 1rem;
+    color: #5D688A;
+    background-color: #FFF2EF;
+    max-width: 200px;
+    border:1px solid #FFDBB6;
+    border-radius: 9999px;
+    margin-top:1rem;
+    margin-left:1rem;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+
+    box-shadow: 0 0 0 2px  #FFDBB6;
+
+    transition-property:box-shadow; 
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    height:50px;
+    font-size: 20px;
+}
+.movie-entry-year:focus {
+    outline: none; 
+    box-shadow: 0 0 0 3px #f4aaaa;
+}
+.movie-entry-year::placeholder {
     color: #6B7280;
     font-size: 15px;
 }
