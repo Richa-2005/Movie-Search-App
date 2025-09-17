@@ -80,7 +80,7 @@
     padding:0.75rem 1rem 0.75rem 1rem;
     color: #5D688A;
     background-color: #FFF2EF;
-    max-width: 200px;
+    width:195px;
     border:1px solid #FFDBB6;
     border-radius: 9999px;
     margin-top:1rem;
@@ -123,8 +123,7 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     transform: scale(1);
-
-    min-width: fit-content;
+    min-width: 220px;
 }
 
 .movie-button:hover {
@@ -233,4 +232,9 @@
     white-space: nowrap; /* Prevent line breaks */
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.year-select{
+    font-size: 22px;
+    
 }

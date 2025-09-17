@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../design/HomePage.css'
 import axios from 'axios'
 export default function App (){
@@ -13,8 +13,17 @@ export default function App (){
   const [isMoreLoading, setIsMoreLoading] = useState(false);
   const [message, setMessage] = useState('Type a movie title and hit search!');
   const [totalResults, setTotalResults] = useState(0);
+  const [rangeYear, setRangeYear] = useState("true"); // Set initial state to the string value of the first option
 
-  // Function to handle the search.
+  const handleYearChange = (e) => {
+    setYear(e.target.value);
+    setPage(1); 
+  };
+
+  const handleRangeYear = (e)=>{
+    setRangeYear(e.target.value);
+  }
+ 
    // Function to handle the search.
    const handleSearch = async (pageToFetch=1) => {
     const query = searchQuery.trim();
@@ -34,14 +43,15 @@ export default function App (){
     setMessage('');
     
     try {
-      const yearParam = year.trim();
       let response;
-      if (yearParam) {
-        // If a year is provided, build the URL with the year parameter
+      const yearParam = year.trim();
+      
+      if (rangeYear === "true" || yearParam === "") {
+        // Decade search or no year provided
         response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}/${yearParam}`);
       } else {
-        // Otherwise, build the URL without the year
-        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}`);
+        // Specific year search
+        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}/${yearParam}`);
       }
      
       const { Search, totalResults } = response.data;
@@ -72,15 +82,15 @@ export default function App (){
   }
 
   const MovieCard = ({ movie }) => {
-    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/FFF2EF/5D688A?text=No+Poster+Available';
+    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/FFDBB6/5D688A?text=No+Poster+Available';
     return (
       <div className="movie-div">
         <img 
           src={posterUrl} 
-          alt={`${movie.Title} Poster`}  
+          alt={`${movie.Title} Poster`} 
           onError={(e) => {
             e.target.onerror = null; // Prevents infinite loop
-            e.target.src = 'https://placehold.co/400x600/FFF2EF/5D688A?text=No+Poster+Available';
+            e.target.src = 'https://placehold.co/400x600/FFDBB6/5D688A?text=No+Poster+Available';
           }}
         />
         <h3 >{movie.Title}</h3>
@@ -102,6 +112,7 @@ export default function App (){
 
  
       <main className="main-section">
+     
         <div className="user-div">
           <input
             type="text"
@@ -115,7 +126,28 @@ export default function App (){
             }}
             className="movie-entry-title"
           />
-          <input
+          <div style = {{display:"flex", flexDirection:"column", minWidth:"320px"}}>
+        
+           <div className="year-select">
+              <input 
+                type="radio" 
+                name="choice" 
+                value="true" 
+                onClick={handleRangeYear} 
+                defaultChecked
+              />
+              <label>Select by Decade</label>
+              
+              <input 
+                type="radio" 
+                name="choice" 
+                value="false" 
+                onClick={handleRangeYear}
+              />
+              <label>Select by Year</label>
+            </div>
+       
+          {rangeYear === "false" && <input
             type="text"
             placeholder="Enter year"
             value={year}
@@ -126,16 +158,16 @@ export default function App (){
               }
             }}
             className="movie-entry-year"
-          />
-          {/* <select className="movie-entry-year" onChange={handleYearChange}>
-            <option>Select Decade</option>
-            <option>2020-2025</option>
-            <option>2010-2020</option>
-            <option>2000-2010</option>
-            <option>1990-2000</option>
-            <option>1980-1990</option>
-            <option>{"Before 1980s"}</option>
-          </select> */}
+          />}
+          {rangeYear === "true" && <select className="movie-entry-year" onChange={handleYearChange}>
+            <option value="">Select Decade</option>
+            <option value='2020'>2020-2025</option>
+            <option value='2010'>2010-2020</option>
+            <option value='2000'>2000-2010</option>
+            <option value='1990'>1990-2000</option>
+            <option value='1980'>1980-1990</option>
+          </select>}
+          </div>
           <button
             onClick={() => handleSearch(1)}
             className="movie-button"
