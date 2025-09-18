@@ -14,7 +14,7 @@ export default function App (){
   const [message, setMessage] = useState('Type a movie title and hit search!');
   const [totalResults, setTotalResults] = useState(0);
   const [rangeYear, setRangeYear] = useState("true"); // Set initial state to the string value of the first option
-
+  const API_BASE_URL = `http://localhost:3500/movies`
   const handleYearChange = (e) => {
     setYear(e.target.value);
     setPage(1); 
@@ -25,45 +25,60 @@ export default function App (){
   }
  
    // Function to handle the search.
-   const handleSearch = async (pageToFetch=1) => {
+   const handleSearch = async (pageToFetch = 1) => {
     const query = searchQuery.trim();
-    if (!query) { 
+    if (!query) {
       setMessage('Please enter a movie title to search.');
       setSearchResults([]);
       return;
     }
-    
+
     if (pageToFetch === 1) {
       setIsLoading(true);
       setSearchResults([]); // Clear previous results for a new search
-      setTotalResults(0);
     } else {
       setIsMoreLoading(true);
     }
     setMessage('');
-    
+
     try {
       let response;
-      const yearParam = year.trim();
-      
-      if (rangeYear === "true" || yearParam === "") {
-        // Decade search or no year provided
-        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}/${yearParam}`);
+      // Case 1: Decade Search
+      if (rangeYear === 'true' && year) {
+        const yearParam = year.trim();
+        // The pageToFetch is sent, but our backend will fetch a new random set each time
+        response = await axios.get(`${API_BASE_URL}/${query}/${pageToFetch}/decade/${yearParam || 'all'}`);
+        
+        // The decade route returns a raw array of movies
+        const newMovies = response.data;
+        if (newMovies && newMovies.length > 0) {
+          setSearchResults((prevResults) => [...prevResults, ...newMovies]);
+          // For decades, we don't get a true total, so we ensure the "Show More" button is always available
+          setTotalResults(searchResults.length + newMovies.length + 1); 
+        } else if (pageToFetch === 1) {
+          setMessage('No movies found for this decade. Please try a different title.');
+        }
+
+      // Case 2 & 3: Specific Year or No Year Search
       } else {
-        // Specific year search
-        response = await axios.get(`http://localhost:3500/movies/${query}/${pageToFetch}/${yearParam}`);
+        const yearParam = year.trim();
+        let url = `${API_BASE_URL}/${query}/${pageToFetch}`;
+        if (yearParam) {
+            url += `/${yearParam}`; // Append year if it exists
+        }
+        response = await axios.get(url);
+
+        // These routes return the standard OMDB object { Search, totalResults }
+        const { Search, totalResults } = response.data;
+        if (Search && Search.length > 0) {
+            setSearchResults((prevResults) => [...prevResults, ...Search]);
+            setTotalResults(Number(totalResults));
+        } else if (pageToFetch === 1) {
+            setMessage('No movies found. Please try a different title.');
+        }
       }
-     
-      const { Search, totalResults } = response.data;
-      
-      if (Search) {
-        setSearchResults((prevResults) => [...prevResults, ...Search]);
-        setTotalResults(Number(totalResults));
-        setMessage('');
-        setPage(pageToFetch);
-      } else {
-        setMessage('No movies found. Please try a different title.');
-      }
+      setPage(pageToFetch);
+
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -71,6 +86,7 @@ export default function App (){
         console.error('Error fetching movies:', error);
         setMessage('An error occurred. Please try again.');
       }
+      if (pageToFetch === 1) setSearchResults([]); // Clear results on error for a new search
     } finally {
       setIsLoading(false);
       setIsMoreLoading(false);
@@ -82,7 +98,7 @@ export default function App (){
   }
 
   const MovieCard = ({ movie }) => {
-    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/FFDBB6/5D688A?text=No+Poster+Available';
+    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
     return (
       <div className="movie-div">
         <img 
@@ -90,7 +106,7 @@ export default function App (){
           alt={`${movie.Title} Poster`} 
           onError={(e) => {
             e.target.onerror = null; // Prevents infinite loop
-            e.target.src = 'https://placehold.co/400x600/FFDBB6/5D688A?text=No+Poster+Available';
+            e.target.src = 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
           }}
         />
         <h3 >{movie.Title}</h3>
@@ -126,9 +142,10 @@ export default function App (){
             }}
             className="movie-entry-title"
           />
-          <div style = {{display:"flex", flexDirection:"column", minWidth:"320px"}}>
-        
+          <div style = {{display:"flex", flexDirection:"column", minWidth:"320px",justifyContent:"center",alignItems:'center'}}>
+        <div style={{display:"flex"}}>
            <div className="year-select">
+           <label>
               <input 
                 type="radio" 
                 name="choice" 
@@ -136,17 +153,20 @@ export default function App (){
                 onClick={handleRangeYear} 
                 defaultChecked
               />
-              <label>Select by Decade</label>
-              
+              Select by Decade</label>
+              </div>
+
+              <div className="year-select">
+              <label>
               <input 
                 type="radio" 
                 name="choice" 
                 value="false" 
                 onClick={handleRangeYear}
               />
-              <label>Select by Year</label>
+              Select by Year</label>
             </div>
-       
+          </div>
           {rangeYear === "false" && <input
             type="text"
             placeholder="Enter year"
