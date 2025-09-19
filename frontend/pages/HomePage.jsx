@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {Link} from 'react-router-dom';
 import '../design/HomePage.css'
 import axios from 'axios'
 export default function App (){
@@ -97,10 +98,14 @@ export default function App (){
     handleSearch(page + 1);
   }
 
+
   const MovieCard = ({ movie }) => {
     const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
+    
     return (
-      <div className="movie-div">
+
+      
+      <Link to={`/movie/${movie.imdbID}`} className="movie-div">
         <img 
           src={posterUrl} 
           alt={`${movie.Title} Poster`} 
@@ -111,7 +116,8 @@ export default function App (){
         />
         <h3 >{movie.Title}</h3>
         <p >{movie.Year}</p>
-      </div>
+        </Link>
+      
     );
   };
 

@@ -1,10 +1,16 @@
-import { useState } from 'react'
-import HomePage from '../pages/HomePage.jsx'
+import React from 'react';
+import {  Routes, Route } from 'react-router-dom';
+import HomePage from '../pages/HomePage.jsx';
+import MoviePage from '../pages/MoviePage.jsx';
+import '../design/HomePage.css';
+
 export default function App() {
   return (
-    <>
-     <HomePage />
-    </>
-  )
+ 
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/movie/:imdbId" element={<MoviePage />} />
+      </Routes>
+  
+  );
 }
-
