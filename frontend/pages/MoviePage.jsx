@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../design/MoviePage.css';
+
 // Base URL for the backend API
 const API_BASE_URL = `http://localhost:3500/movies`;
 
@@ -31,6 +32,26 @@ const MoviePage = () => {
     fetchMovieDetails();
   }, [imdbId]);
 
+  // A small component to render the different ratings
+  const Ratings = ({ ratings }) => {
+    if (!ratings || ratings.length === 0) {
+      return null;
+    }
+    return (
+      <div className="ratings-container">
+        <h4>Critical Ratings</h4>
+        <div className="ratings-list">
+          {ratings.map((rating, index) => (
+            <div key={index} className="rating-item">
+              <span className="rating-value">{rating.Value}</span>
+              <span className="rating-source">{rating.Source}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="movie-detail-container">
@@ -49,7 +70,6 @@ const MoviePage = () => {
     );
   }
 
-  // Use optional chaining (?) to safely access properties
   const posterUrl = movieDetails?.Poster !== 'N/A' ? movieDetails.Poster : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
 
   return (
@@ -66,18 +86,21 @@ const MoviePage = () => {
             }}
             className="detail-poster"
           />
-          <h3>{movieDetails?.Title}</h3>
-          <p>{movieDetails?.Year}</p>
+          <Ratings ratings={movieDetails?.Ratings} />
         </div>
         <div className="detail-info">
           <h2>{movieDetails?.Title} ({movieDetails?.Year})</h2>
+          <p><strong>Rated:</strong> {movieDetails?.Rated} | <strong>Runtime:</strong> {movieDetails?.Runtime}</p>
           <p><strong>Genre:</strong> {movieDetails?.Genre}</p>
-          <p><strong>Director:</strong> {movieDetails?.Director}</p>
-          <p><strong>Actors:</strong> {movieDetails?.Actors}</p>
           <p><strong>Plot:</strong> {movieDetails?.Plot}</p>
+          <p><strong>Director:</strong> {movieDetails?.Director}</p>
+          <p><strong>Writer:</strong> {movieDetails?.Writer}</p>
+          <p><strong>Actors:</strong> {movieDetails?.Actors}</p>
+          <p><strong>Language:</strong> {movieDetails?.Language}</p>
+          <p><strong>Country:</strong> {movieDetails?.Country}</p>
+          <p><strong>Awards:</strong> {movieDetails?.Awards}</p>
+          <p><strong>Box Office:</strong> {movieDetails?.BoxOffice}</p>
           <p><strong>IMDB Rating:</strong> {movieDetails?.imdbRating}/10 ({movieDetails?.imdbVotes} votes)</p>
-          <p><strong>Runtime:</strong> {movieDetails?.Runtime}</p>
-          <p><strong>Rated:</strong> {movieDetails?.Rated}</p>
         </div>
       </div>
     </div>
@@ -85,3 +108,4 @@ const MoviePage = () => {
 };
 
 export default MoviePage;
+

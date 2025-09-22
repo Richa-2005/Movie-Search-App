@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #5D688A;
-    color: #FFF2EF;
+    background-color: #1A202C; /* Updated */
+    color: #FFF2EF; /* Updated */
     min-height: 100vh;
-    }
+}
 
 .header-section{
     width: 100%;
@@ -18,13 +18,13 @@
 .header-section > h1{
     font-size: 9rem; 
     font-weight: 800; 
-    color: #FFDBB6;
+    color: #F7A5A5; /* Updated */
     margin-bottom: 0.5rem; 
 }
 
 .header-section > p{
     font-size: 2rem;
-    color:#F7A5A5;
+    color: #FFDBB6; /* Updated */
 }
 
 .main-section{
@@ -45,52 +45,48 @@
 .movie-entry-title{
     display: flex;
     padding:0.75rem 1rem 0.75rem 1rem;
-    color: #5D688A;
-    background-color: #FFF2EF;
+    color: #FFF2EF; /* Updated */
+    background-color: #2D3748; /* Updated */
     width:100%;
-    border:1px solid #FFDBB6;
+    border: 2px solid #5D688A; /* Updated */
     border-radius: 9999px;
     margin-top:1rem;
     outline: 2px solid transparent;
     outline-offset: 2px;
-
-    box-shadow: 0 0 0 2px  #FFDBB6;
-
-    transition-property:box-shadow; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Updated */
+    transition-property:box-shadow, border-color; /* Updated */
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
-    
-    height:50px;
+    height:60px;
     min-width: 900px;
     font-size: 20px;
 }
 
 .movie-entry-title:focus {
     outline: none; 
-    box-shadow: 0 0 0 3px #f4aaaa;
+    border-color: #F7A5A5; /* Updated */
+    box-shadow: 0 0 0 3px rgba(247, 165, 165, 0.4); /* Updated */
 }
 
 .movie-entry-title::placeholder {
-    color: #6B7280;
+    color: #A0AEC0; /* Updated */
     font-size: 15px;
 }
 
 .movie-entry-year{
     display: flex;
     padding:0.75rem 1rem 0.75rem 1rem;
-    color: #5D688A;
-    background-color: #FFF2EF;
+    color: #FFF2EF; /* Updated */
+    background-color: #2D3748; /* Updated */
     width:195px;
-    border:1px solid #FFDBB6;
+    border: 2px solid #5D688A; /* Updated */
     border-radius: 9999px;
     margin-top:1rem;
     margin-left:1rem;
     outline: 2px solid transparent;
     outline-offset: 2px;
-
-    box-shadow: 0 0 0 2px  #FFDBB6;
-
-    transition-property:box-shadow; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Updated */
+    transition-property:box-shadow, border-color; /* Updated */
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     height:50px;
@@ -98,10 +94,11 @@
 }
 .movie-entry-year:focus {
     outline: none; 
-    box-shadow: 0 0 0 3px #f4aaaa;
+    border-color: #F7A5A5; /* Updated */
+    box-shadow: 0 0 0 3px rgba(247, 165, 165, 0.4); /* Updated */
 }
 .movie-entry-year::placeholder {
-    color: #6B7280;
+    color: #A0AEC0; /* Updated */
     font-size: 15px;
 }
 
@@ -109,25 +106,24 @@
     margin-top:1rem;
     margin-left:1rem;
     padding: 0.75rem 1.5rem 0.75rem 1.5rem;
-    background-color: #ffdbb6;
+    background-color: #FFDBB6; /* Updated */
     font-size: large;
-    color: #5d688a;
+    color: #1A202C; /* Updated */
     font-weight: 600;
-
     border-radius: 9999px;
-    border-width: 3px;
-    border:#ffd4a2;
+    border-width: 0px; /* Updated */
+    border: none;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     transform: scale(1);
     min-width: 220px;
+    cursor: pointer; /* Added for better UX */
 }
 
 .movie-button:hover {
-    background-color: #ffd4a2;
+    background-color: #F7A5A5; /* Updated */
     transform: scale(1.05);
 }
 
@@ -139,25 +135,21 @@
     padding-right: 1rem;
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
-    /* gap-6: Gap between grid items 6 units (24px or 1.5rem) */
     gap: 1.5rem;
 }
   
-  /* sm:grid-cols-2: 2 columns on screens 640px and up */
 @media (min-width: 640px) {
 .results-container {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 }
 
-/* md:grid-cols-3: 3 columns on screens 768px and up */
 @media (min-width: 768px) {
 .results-container {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 }
 
-/* lg:grid-cols-4: 4 columns on screens 1024px and up */
 @media (min-width: 1024px) {
 .results-container {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -174,12 +166,12 @@
     font-size: 20px;
     margin-top: 1.5rem;
     text-align: center;
-    color: #F7A5A5;
+    color: #FFDBB6; /* Updated */
     font-weight: 500;
 }
 
 .movie-div{
-    background-color: #e2d0be;
+    background-color: #2D3748; /* Updated */
     padding: 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -192,7 +184,7 @@
     align-items: center;
     aspect-ratio: 2 / 3; 
     padding-bottom: 1rem;
-
+    text-decoration: none; /* Added to remove underline from Link component */
 }
 
 .movie-div:hover{
@@ -217,30 +209,31 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #5D688A;
+    color: #FFF2EF; /* Updated */
     white-space: wrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
-
 }
 
 .movie-div>p{
-    color:#5D688A ;
+    color: #F7A5A5; /* Updated */
     font-size: 0.875rem;
     width: 100%;
-    white-space: nowrap; /* Prevent line breaks */
+    white-space: nowrap; 
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .year-select{
-    font-size: 21px;
-    margin-left: 7px;
+    font-size: 20px;
+    margin-left: 4.5px;
+    /* color: #F7A5A5; Updated */
 }
 
 input[type="radio"] {
     width: 14px; 
     height: 14px; 
     margin-right: 2px; 
+    accent-color: #F7A5A5; /* Added to style radio button */
 }
+
