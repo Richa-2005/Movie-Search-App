@@ -128,6 +128,7 @@ export default function App (){
   return (
     <div className="body-container">
       <header className="header-section">
+      <Link to="/suggest" className="suggest-button" style={{position:'relative', left:'80%'}}>Let's Decide Together</Link>
         <h1>CineVerse</h1>
         <p>What's on your mind today?</p>
       </header>

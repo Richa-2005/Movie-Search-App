@@ -2,6 +2,7 @@ import React from 'react';
 import {  Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage.jsx';
 import MoviePage from '../pages/MoviePage.jsx';
+import SuggestionPage from '../pages/SuggestionPage.jsx'
 import '../design/HomePage.css';
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/movie/:imdbId" element={<MoviePage />} />
+        <Route path="/suggest" element={<SuggestionPage />} />
       </Routes>
   
   );

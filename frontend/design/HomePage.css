@@ -237,3 +237,25 @@ input[type="radio"] {
     accent-color: #F7A5A5; /* Added to style radio button */
 }
 
+.suggest-button{
+    margin-top:1rem;
+    margin-right:1rem;
+    padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+    background-color: #FFDBB6; /* Updated */
+    font-size: large;
+    color: #1A202C; /* Updated */
+    font-weight: 600;
+    border-radius: 9999px;
+    border-width: 0px; /* Updated */
+    border: none;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    transform: scale(1);
+    min-width: 220px;
+    cursor: pointer;
+    text-decoration: none;
+   
+
+}

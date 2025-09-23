@@ -39,11 +39,11 @@ const MoviePage = () => {
     }
     return (
       <div className="ratings-container">
-        <h4>Critical Ratings</h4>
+        <h2>Critical Ratings</h2>
         <div className="ratings-list">
           {ratings.map((rating, index) => (
             <div key={index} className="rating-item">
-              <span className="rating-value">{rating.Value}</span>
+              <span className="rating-value">{rating.Value + "  :   "}</span>
               <span className="rating-source">{rating.Source}</span>
             </div>
           ))}

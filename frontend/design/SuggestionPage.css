@@ -1,0 +1,165 @@
+/* General container for the suggestion page */
+.suggestion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Header styles */
+.suggestion-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+}
+
+.suggestion-header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #FFDBB6; /* Peach for the main title */
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-header p {
+    font-size: 1.1rem;
+    color: #F7A5A5; /* Pink for the subtitle */
+    line-height: 1.6;
+}
+
+/* Form styling */
+.suggestion-form {
+    background-color: #2D3748; /* Lighter dark slate for the form card */
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between form groups */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #FFDBB6; /* Peach for labels */
+    margin-bottom: 0.5rem;
+}
+
+.form-group select,
+.form-group input {
+    padding: 0.75rem 1rem;
+    color: #FFF2EF;
+    background-color: #1A202C; /* Darkest slate for inputs */
+    border: 2px solid #5D688A; /* Slate blue border */
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    border-color: #F7A5A5;
+    box-shadow: 0 0 0 3px rgba(247, 165, 165, 0.4);
+}
+
+/* Suggestion Button */
+.suggestion-button {
+    padding: 0.85rem 1.5rem;
+    background-color: #5D688A;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.suggestion-button:hover:not(:disabled) {
+    background-color: #F7A5A5;
+    color: #1A202C;
+    transform: translateY(-2px);
+}
+
+.suggestion-button:disabled {
+    background-color: #4A5568;
+    cursor: not-allowed;
+}
+
+/* Results section styling */
+.suggestion-result {
+    margin-top: 3rem;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.loading-message,
+.error-message {
+    font-size: 1.1rem;
+    color: #A0AEC0;
+    padding: 2rem;
+}
+
+.error-message {
+    color: #F7A5A5;
+}
+
+/* Suggested movie card */
+.suggestion-card {
+    background-color: #2D3748;
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    text-align: left;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.suggestion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.suggestion-card img {
+    width: 180px;
+    height: 270px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.suggestion-card-info {
+    padding: 1.5rem;
+}
+
+.suggestion-card-info h3 {
+    font-size: 1.5rem;
+    color: #FFF2EF;
+    margin: 0 0 0.5rem 0;
+}
+
+.suggestion-card-info p {
+    margin: 0;
+    color: #FFDBB6;
+    font-size: 1rem;
+}
+
+.suggestion-card-info .plot {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #A0AEC0;
+    line-height: 1.6;
+}
+
