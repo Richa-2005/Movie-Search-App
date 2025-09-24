@@ -1,120 +1,124 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import '../design/SuggestionPage.css'; 
+import '../design/SuggestionPage.css';
 
 // Base URL for the backend API
 const API_BASE_URL = `http://localhost:3500/movies`;
 
-// A reusable component to display the suggested movie
-const MovieSuggestionCard = ({ movie }) => {
-    const posterUrl = movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
-    return (
-        <Link to={`/movie/${movie.imdbID}`} className="suggestion-card">
-            <img src={posterUrl} alt={`${movie.Title} Poster`} />
-            <div className="suggestion-card-info">
-                <h3>{movie.Title}</h3>
-                <p>{movie.Year}</p>
-                <p className="plot">{movie.Plot}</p>
-            </div>
-        </Link>
-    );
-};
-
-
 const SuggestionPage = () => {
-    const [mood, setMood] = useState('');
-    const [decade, setDecade] = useState('');
-    const [person, setPerson] = useState('');
-    const [suggestion, setSuggestion] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+  const [mood, setMood] = useState('');
+  const [decade, setDecade] = useState('');
+  const [time, setTime] = useState(''); // New state for time slot
+  const [actorOrDirector, setActorOrDirector] = useState('');
+  
+  const [suggestedMovie, setSuggestedMovie] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    const handleGetSuggestion = async (e) => {
-        e.preventDefault(); // Prevent form from submitting traditionally
-        setIsLoading(true);
-        setSuggestion(null);
-        setError('');
+  const handleSuggestion = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    setSuggestedMovie(null);
 
-        try {
-            // This is a hypothetical endpoint. You would need to build this on your backend.
-            // It would take the query params and find a random, relevant movie.
-            const response = await axios.get(`${API_BASE_URL}/suggest`, {
-                params: {
-                    genre: mood,
-                    decade: decade,
-                    person: person
-                }
-            });
-            setSuggestion(response.data);
-        } catch (err) {
-            setError('Could not find a suggestion. Please try a different combination!');
-            console.error('Error fetching suggestion:', err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    try {
+      // Construct parameters, only including ones with values
+      const params = {};
+      if (mood) params.mood = mood;
+      if (decade) params.decade = decade;
+      if (time) params.time = time; // Add time to params
+      if (actorOrDirector) params.actorOrDirector = actorOrDirector;
 
-    return (
-        <div className="suggestion-container">
-            <Link to="/" className="back-button">← Back to Search</Link>
-            
-            <header className="suggestion-header">
-                <h1>Let's Decide Together</h1>
-                <p>Tell us what you're looking for, and we'll find the perfect movie.</p>
-            </header>
+      const response = await axios.get(`${API_BASE_URL}/suggest`, { params });
+      setSuggestedMovie(response.data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Could not find a suggestion. Please try different criteria!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-            <form className="suggestion-form" onSubmit={handleGetSuggestion}>
-                <div className="form-group">
-                    <label htmlFor="mood-select">What's your current mood?</label>
-                    <select id="mood-select" value={mood} onChange={(e) => setMood(e.target.value)}>
-                        <option value="">Any Mood/Genre</option>
-                        <option value="Action">Feeling Adventurous?</option>
-                        <option value="Comedy">Need a Laugh?</option>
-                        <option value="Drama">Something Serious?</option>
-                        <option value="Horror">Want a Scare?</option>
-                        <option value="Sci-Fi">A Journey to the Stars?</option>
-                        <option value="Romance">Lost in Love?</option>
-                        <option value="Fantasy">A Touch of Magic?</option>
-                    </select>
-                </div>
+  return (
+    <div className="suggestion-container">
+        <Link to="/" className="back-button">← Back to Search</Link>
+      <div className="suggestion-header">
+        <h1>Let's Decide Together</h1>
+        <p>Tell us what you're looking for, and we'll find the perfect movie for you.</p>
+      </div>
 
-                <div className="form-group">
-                    <label htmlFor="decade-select">Pick a time period:</label>
-                    <select id="decade-select" value={decade} onChange={(e) => setDecade(e.target.value)}>
-                        <option value="">Any Decade</option>
-                        <option value="2020">The 2020s</option>
-                        <option value="2010">The 2010s</option>
-                        <option value="2000">The 2000s</option>
-                        <option value="1990">The 1990s</option>
-                        <option value="1980">The 1980s</option>
-                        <option value="1970">The 1970s</option>
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="person-input">A favorite actor or director?</label>
-                    <input 
-                        id="person-input"
-                        type="text" 
-                        placeholder="e.g., Tom Hanks or Stanley Kubrick" 
-                        value={person}
-                        onChange={(e) => setPerson(e.target.value)}
-                    />
-                </div>
-
-                <button type="submit" className="suggestion-button" disabled={isLoading}>
-                    {isLoading ? 'Thinking...' : 'Find My Movie!'}
-                </button>
-            </form>
-
-            <div className="suggestion-result">
-                {isLoading && <div className="loading-message">Finding the perfect movie for you...</div>}
-                {error && <div className="error-message">{error}</div>}
-                {suggestion && <MovieSuggestionCard movie={suggestion} />}
-            </div>
+      <form className="suggestion-form" onSubmit={handleSuggestion}>
+        <div className="form-group">
+          <label htmlFor="mood">What's your current mood?</label>
+          <select id="mood" value={mood} onChange={(e) => setMood(e.target.value)}>
+            <option value="">Any Mood</option>
+            <option value="Action">Action-Packed</option>
+            <option value="Comedy">Funny & Lighthearted</option>
+            <option value="Drama">Serious & Thought-Provoking</option>
+            <option value="Horror">Scary & Intense</option>
+            <option value="Romance">Romantic</option>
+            <option value="Sci-Fi">Sci-Fi & Fantasy</option>
+            <option value="Thriller">Thrilling & Suspenseful</option>
+          </select>
         </div>
-    );
+
+        <div className="form-group">
+          <label htmlFor="decade">Which decade?</label>
+          <select id="decade" value={decade} onChange={(e) => setDecade(e.target.value)}>
+            <option value="">Any Decade</option>
+            <option value="2020">2020s</option>
+            <option value="2010">2010s</option>
+            <option value="2000">2000s</option>
+            <option value="1990">1990s</option>
+            <option value="1980">1980s</option>
+          </select>
+        </div>
+        
+        
+        <div className="form-group">
+          <label htmlFor="time">How much time do you have?</label>
+          <select id="time" value={time} onChange={(e) => setTime(e.target.value)}>
+            <option value="">Any Length</option>
+            <option value="lt90">Under 90 minutes</option>
+            <option value="90-120">90 - 120 minutes</option>
+            <option value="gt120">Over 2 hours</option>
+          </select>
+        </div>
+
+
+        <div className="form-group">
+          <label htmlFor="actor-director">Favorite Actor or Director (Optional)</label>
+          <input
+            type="text"
+            id="actor-director"
+            placeholder="e.g., Tom Hanks or Christopher Nolan"
+            value={actorOrDirector}
+            onChange={(e) => setActorOrDirector(e.target.value)}
+          />
+        </div>
+
+        <button type="submit" className="suggestion-button" disabled={isLoading}>
+          {isLoading ? 'Thinking...' : 'Find a Movie'}
+        </button>
+      </form>
+
+      <div className="suggestion-result">
+        {isLoading && <p className="loading-message">Finding the perfect match...</p>}
+        {error && <p className="error-message">{error}</p>}
+        {suggestedMovie && (
+          <Link to={`/movie/${suggestedMovie.imdbID}`} className="suggestion-card">
+            <img src={suggestedMovie.Poster} alt={`${suggestedMovie.Title} Poster`} />
+            <div className="suggestion-card-info">
+              <h3>{suggestedMovie.Title}</h3>
+              <p>{suggestedMovie.Year} · {suggestedMovie.Runtime}</p>
+              <p className="plot">{suggestedMovie.Plot}</p>
+            </div>
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default SuggestionPage;
+
