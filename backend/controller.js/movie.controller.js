@@ -127,3 +127,67 @@ export const getMovie = async(req, res) =>{
         res.status(500).json({ error: 'An error occurred while fetching movie details.' });
     }
 };
+
+export const getMovieSuggestion = async (req, res) => {
+    try {
+        const { mood, decade, time } = req.query;
+
+        // A map to convert your form's genre/mood names to TMDb genre IDs
+        const genreMap = {
+            'Action': '28', 'Comedy': '35', 'Drama': '18', 'Horror': '27',
+            'Romance': '10749', 'Sci-Fi': '878', 'Thriller': '53'
+        };
+
+        // Base URL for the TMDb discover endpoint
+        let discoverUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&sort_by=popularity.desc`;
+
+        // Add filters based on user input
+        if (mood && genreMap[mood]) {
+            discoverUrl += `&with_genres=${genreMap[mood]}`;
+        }
+        if (decade) {
+            const startYear = parseInt(decade);
+            discoverUrl += `&primary_release_date.gte=${startYear}-01-01&primary_release_date.lte=${startYear + 9}-12-31`;
+        }
+        if (time === 'lt90') {
+            discoverUrl += `&with_runtime.lte=90`;
+        } else if (time === '90-120') {
+            discoverUrl += `&with_runtime.gte=90&with_runtime.lte=120`;
+        } else if (time === 'gt120') {
+            discoverUrl += `&with_runtime.gte=120`;
+        }
+
+        // Fetch a list of movies matching the criteria
+        const response = await axios.get(discoverUrl);
+        const movies = response.data.results;
+
+        if (!movies || movies.length === 0) {
+            return res.status(404).json({ error: "Couldn't find any movies matching those criteria. Try being less specific!" });
+        }
+
+        // Pick a random movie from the results
+        const randomMovie = movies[Math.floor(Math.random() * movies.length)];
+
+        // Fetch the full details for that one random movie (to get runtime, plot etc.)
+        const detailsUrl = `https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${process.env.TMDB_API_KEY}&append_to_response=credits`;
+        const detailsResponse = await axios.get(detailsUrl);
+        const movieDetails = detailsResponse.data;
+
+        // Format the response to match what your frontend expects
+        const formattedResponse = {
+            imdbID: movieDetails.imdb_id,
+            Title: movieDetails.title,
+            Year: movieDetails.release_date.substring(0, 4),
+            Poster: movieDetails.poster_path ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}` : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster',
+            Plot: movieDetails.overview,
+            Runtime: `${movieDetails.runtime} min`,
+        };
+
+        res.status(200).json(formattedResponse);
+
+    } catch (error) {
+        console.error("Error fetching movie suggestion:", error.message);
+        res.status(500).json({ error: "An error occurred while getting a suggestion." });
+    }
+};
+
