@@ -3,7 +3,6 @@ CineVerse is a sophisticated and feature-rich web application built with React.j
 <br /><br />
 Status: ✅ Complete & Ready for Deployment <br />
 
-
 <h2> ✨ Features</h2>
 CineVerse is more than just a search bar. It's a complete movie exploration tool with three core features:
 
@@ -17,11 +16,15 @@ CineVerse is more than just a search bar. It's a complete movie exploration tool
 
 ⦿ **Persistent State:** Your search results are preserved when you navigate to a movie's details and back, ensuring a seamless browsing experience.
 
+<img width="3414" height="1934" alt="image" src="https://github.com/user-attachments/assets/fae3a068-e20e-4d34-bac3-3c5f5bd6a2f7" />
+
 <h3>2. Detailed Movie Information</h3> 
 
 ⦿Click on any movie to view a dedicated details page. <br /> 
 
 ⦿See comprehensive information including the plot, poster, runtime, genre, director, actors, box office, and critical ratings from sources like Rotten Tomatoes and Metacritic.
+
+<img width="3262" height="1916" alt="image" src="https://github.com/user-attachments/assets/efbeaced-2bb1-4295-a8a4-747c7759722c" />
 
 <h3>3. "Let's Decide Together" - The Suggestion Engine</h3>
 Can't decide what to watch? This feature acts as your personal movie curator.<br />
@@ -36,6 +39,9 @@ Can't decide what to watch? This feature acts as your personal movie curator.<br
 ⦿ **Filter by People:** Find movies featuring a favorite actor or made by a specific director.
 
 ⦿ **Filter by Keyword:** Discover movies based on themes like "time travel," "dystopia," or "based on a true story."
+
+<img width="3262" height="1936" alt="image" src="https://github.com/user-attachments/assets/8de0b06f-77b6-41a3-9193-aae7f25cdd12" />
+
 
 <h2>🛠️ Tech Stack & APIs</h2>
 This project was built using a modern web development stack.
