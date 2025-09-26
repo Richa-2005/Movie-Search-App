@@ -15,27 +15,7 @@ body {
     min-height: 100vh;
     box-sizing: border-box;
   }
-  
-  /* --- Back Button --- */
-  .back-button {
-    align-self: flex-start; /* Position to the top-left */
-    background-color: #5D688A; /* Slate blue from your palette */
-    color: #FFFFFF;
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px; /* Pill shape */
-    text-decoration: none;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .back-button:hover {
-    background-color: #F7A5A5; /* Use the pink for a nice hover effect */
-    color: #1A202C;
-    transform: translateY(-2px); /* Slight lift on hover */
-  }
-  
+
   /* --- Main Layout --- */
   /* Flex container for the poster card and the info panel */
   .detail-card-layout {

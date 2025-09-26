@@ -6,40 +6,45 @@ import MoviePage from '../pages/MoviePage.jsx';
 import SuggestionPage from '../pages/SuggestionPage.jsx'
 import '../design/HomePage.css';
 
-const SearchContext = createContext();
+const AppStateContext = createContext();
+export const useAppState = () => useContext(AppStateContext);
 
-// Custom hook to make it easier to use the context
-export const useSearch = () => useContext(SearchContext);
-
-// --- 2. Create the Provider Component ---
-// This component will now hold all the state and logic for searching
-const SearchProvider = ({ children }) => {
+// --- Provider Component (Now Manages ALL App State) ---
+const AppStateProvider = ({ children }) => {
+  // State for Homepage Search
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [year, setYear] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMoreLoading, setIsMoreLoading] = useState(false);
-  const [message, setMessage] = useState('Type a movie title and hit search!');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchMoreLoading, setSearchMoreLoading] = useState(false);
+  const [searchMessage, setSearchMessage] = useState('Type a movie title and hit search!');
   const [totalResults, setTotalResults] = useState(0);
   const [rangeYear, setRangeYear] = useState("true");
+  
+  // State for Suggestion Page
+  const [suggestedMovies, setSuggestedMovies] = useState([]);
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
+  const [suggestionError, setSuggestionError] = useState('');
+
   const API_BASE_URL = `http://localhost:3500/movies`;
 
+  // Homepage search logic
   const handleSearch = async (pageToFetch = 1, query = searchQuery) => {
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
-      setMessage('Please enter a movie title to search.');
+      setSearchMessage('Please enter a movie title to search.');
       setSearchResults([]);
       return;
     }
 
     if (pageToFetch === 1) {
-      setIsLoading(true);
+      setSearchLoading(true);
       setSearchResults([]);
     } else {
-      setIsMoreLoading(true);
+      setSearchMoreLoading(true);
     }
-    setMessage('');
+    setSearchMessage('');
 
     try {
       let response;
@@ -50,7 +55,7 @@ const SearchProvider = ({ children }) => {
           setSearchResults((prev) => pageToFetch === 1 ? newMovies : [...prev, ...newMovies]);
           setTotalResults(searchResults.length + newMovies.length + 1);
         } else if (pageToFetch === 1) {
-          setMessage('No movies found for this decade.');
+          setSearchMessage('No movies found for this decade.');
         }
       } else {
         let url = `${API_BASE_URL}/${trimmedQuery}/${pageToFetch}`;
@@ -63,50 +68,62 @@ const SearchProvider = ({ children }) => {
           setSearchResults((prev) => pageToFetch === 1 ? Search : [...prev, ...Search]);
           setTotalResults(Number(totalResults));
         } else if (pageToFetch === 1) {
-          setMessage('No movies found.');
+          setSearchMessage('No movies found.');
         }
       }
       setPage(pageToFetch);
     } catch (error) {
-      setMessage(error.response?.data?.error || 'An error occurred.');
+      setSearchMessage(error.response?.data?.error || 'An error occurred while searching.');
       if (pageToFetch === 1) setSearchResults([]);
     } finally {
-      setIsLoading(false);
-      setIsMoreLoading(false);
+      setSearchLoading(false);
+      setSearchMoreLoading(false);
     }
   };
 
+  // Suggestion Page Logic
+  const handleSuggestion = async (criteria) => {
+    setSuggestionLoading(true);
+    setSuggestionError('');
+    setSuggestedMovies([]);
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/suggest`, { params: criteria });
+      setSuggestedMovies(response.data);
+      console.log(response.data);
+    } catch (err) {
+      setSuggestionError(err.response?.data?.error || 'Could not find a suggestion.');
+    } finally {
+      setSuggestionLoading(false);
+    }
+  };
+
+  // Value provided to all child components
   const value = {
-    page, setPage,
-    searchQuery, setSearchQuery,
-    year, setYear,
-    searchResults, setSearchResults,
-    isLoading, setIsLoading,
-    isMoreLoading, setIsMoreLoading,
-    message, setMessage,
-    totalResults, setTotalResults,
-    rangeYear, setRangeYear,
-    handleSearch
+    page, setPage, searchQuery, setSearchQuery, year, setYear,
+    searchResults, searchLoading, searchMoreLoading, searchMessage,
+    totalResults, rangeYear, setRangeYear, handleSearch,
+    suggestedMovies, suggestionLoading, suggestionError, handleSuggestion
   };
 
   return (
-    <SearchContext.Provider value={value}>
+    <AppStateContext.Provider value={value}>
       {children}
-    </SearchContext.Provider>
+    </AppStateContext.Provider>
   );
 };
 
-// --- 3. Main App Component ---
+// --- Main App Component ---
 export default function App() {
   return (
-      <SearchProvider> 
+
+      <AppStateProvider>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/movie/:imdbId" element={<MoviePage />} />
           <Route path="/suggest" element={<SuggestionPage />} />
         </Routes>
-      </SearchProvider>
+      </AppStateProvider>
  
   );
 }
-

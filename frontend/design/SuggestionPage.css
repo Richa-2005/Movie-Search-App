@@ -184,3 +184,19 @@
     }
 }
 
+.back-button{
+    align-self: flex-start; /* Position to the top-left */
+    background-color: #5D688A; /* Slate blue from your palette */
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px; /* Pill shape */
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    position: relative;
+    right:90%;
+
+}
+

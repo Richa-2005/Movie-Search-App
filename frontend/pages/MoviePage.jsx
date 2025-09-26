@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// Import useNavigate to handle programmatic navigation
-import { useNavigate, useParams } from 'react-router-dom';
+// Make sure useLocation is imported
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 // Corrected the import path for the CSS file
 import '../design/MoviePage.css';
@@ -9,25 +9,22 @@ const API_BASE_URL = `http://localhost:3500/movies`;
 
 const MoviePage = () => {
   const { imdbId } = useParams();
-  // Get the navigate function from the hook
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation();
   const [movieDetails, setMovieDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
-      // No changes needed in this effect
       try {
         const response = await axios.get(`${API_BASE_URL}/details/${imdbId}`);
         if (response.data.Response === "True") {
           setMovieDetails(response.data);
-          setMessage('');
         } else {
           setMessage(response.data.Error || 'Could not find movie details.');
         }
       } catch (error) {
-        console.error('Error fetching movie details:', error);
         setMessage('An error occurred while fetching movie details.');
       } finally {
         setIsLoading(false);
@@ -37,9 +34,7 @@ const MoviePage = () => {
   }, [imdbId]);
 
   const Ratings = ({ ratings }) => {
-    if (!ratings || ratings.length === 0) {
-      return null;
-    }
+    if (!ratings || ratings.length === 0) return null;
     return (
       <div className="ratings-container">
         <h4>Critical Ratings</h4>
@@ -58,9 +53,7 @@ const MoviePage = () => {
   if (isLoading) {
     return (
       <div className="movie-detail-container">
-        <div className="loading-outer">
-          <div className="message">Loading movie details...</div>
-        </div>
+        <div className="loading-outer"><div className="message">Loading...</div></div>
       </div>
     );
   }
@@ -74,25 +67,32 @@ const MoviePage = () => {
   }
 
   const posterUrl = movieDetails?.Poster !== 'N/A' ? movieDetails.Poster : 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
-
+  const backPath = location.state?.from || '/';
+  const backButtonStyle = {
+    alignSelf: 'flex-start',
+    marginBottom: '2rem',
+    backgroundColor: '#5D688A',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '50px',
+    padding: '0.75rem 1.5rem',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+    fontWeight: 600,
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  };
   return (
     <div className="movie-detail-container">
-      {/* --- THIS IS THE FIX --- */}
-      {/* Replaced Link with a button that uses navigate(-1) to go back one page */}
-      <button onClick={() => navigate(-1)} className="back-button">
+      <button onClick={() => navigate(backPath)}  style={backButtonStyle} >
         ← Back to Previous Page
       </button>
-      {/* --- END OF FIX --- */}
-
       <div className="detail-card-layout">
         <div className="detail-card">
           <img
             src={posterUrl}
             alt={`${movieDetails?.Title} Poster`}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available';
-            }}
+            onError={(e) => { e.target.src = 'https://placehold.co/400x600/5D688A/FFDBB6?text=No+Poster+Available'; }}
             className="detail-poster"
           />
           <Ratings ratings={movieDetails?.Ratings} />
@@ -105,11 +105,7 @@ const MoviePage = () => {
           <p><strong>Director:</strong> {movieDetails?.Director}</p>
           <p><strong>Writer:</strong> {movieDetails?.Writer}</p>
           <p><strong>Actors:</strong> {movieDetails?.Actors}</p>
-          <p><strong>Language:</strong> {movieDetails?.Language}</p>
-          <p><strong>Country:</strong> {movieDetails?.Country}</p>
           <p><strong>Awards:</strong> {movieDetails?.Awards}</p>
-          <p><strong>Box Office:</strong> {movieDetails?.BoxOffice}</p>
-          <p><strong>IMDB Rating:</strong> {movieDetails?.imdbRating}/10 ({movieDetails?.imdbVotes} votes)</p>
         </div>
       </div>
     </div>
