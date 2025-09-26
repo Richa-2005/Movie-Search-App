@@ -16,7 +16,8 @@ CineVerse is more than just a search bar. It's a complete movie exploration tool
 
 ⦿ **Persistent State:** Your search results are preserved when you navigate to a movie's details and back, ensuring a seamless browsing experience.
 
-<img width="3414" height="1934" alt="image" src="https://github.com/user-attachments/assets/fae3a068-e20e-4d34-bac3-3c5f5bd6a2f7" />
+<img width="3400" height="1948" alt="image" src="https://github.com/user-attachments/assets/78eed9db-ab1d-4645-8932-4bc791a42e22" />
+
 
 <h3>2. Detailed Movie Information</h3> 
 
